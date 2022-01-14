@@ -1,0 +1,24 @@
+{
+  "name": "assignment",
+  "version": "1.0.0",
+  "description": "Backend assignment for flippr internship",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanskarbiyani/apiAssignment.git"
+  },
+  "author": "Sanskar Biyani",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sanskarbiyani/apiAssignment/issues"
+  },
+  "homepage": "https://github.com/sanskarbiyani/apiAssignment#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "mongodb": "^4.3.0",
+    "nodemon": "^2.0.15"
+  }
+}
