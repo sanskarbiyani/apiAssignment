@@ -9,6 +9,7 @@ const { add } = require("nodemon/lib/rules");
 const app = express();
 const port = 3000;
 
+app.use(express.text());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
@@ -40,9 +41,16 @@ async function getData(url, collection1, collection2){
 
 app.post("/api1/:collection1", (req, res)=>{
     var collection1 = req.params.collection1;
-    var collection2 = req.query.collection2;
-    var connUrl = req.body.mongodbUrl;
-    getData(connUrl, collection1, collection2).catch(console.error);
+    var collection2 = Object.values(req.query)[0];
+    if(typeof(req.body) == 'object'){
+        var connUrl = Object.values(req.body)[0];
+    } else {
+        var connUrl = req.body;
+    }
+    if(Array.isArray(connUrl)){
+        connUrl = connUrl[0];
+    }
+    // getData(connUrl, collection1, collection2).catch(console.error);
     res.send("Got it.");
 })
 
@@ -72,7 +80,7 @@ app.post("/api2", (req, res)=>{
         .finally(()=>{
             if(result.length == receivedAddresses.length){
                 res.setHeader('Content-Type', 'application/json');
-                res.send(JSON.stringify(result));
+                res.json(result);
             }
         })
     })
