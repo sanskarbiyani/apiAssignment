@@ -1,10 +1,6 @@
 const express = require("express");
 const {MongoClient} = require("mongodb");
-// const request = require("request")
-// const https = require("https")
 const axios = require('axios')
-var ObjectId = require("mongodb").ObjectId;
-const { add } = require("nodemon/lib/rules");
 
 const app = express();
 const port = 3000;
@@ -20,22 +16,24 @@ async function getData(url, collection1, collection2){
         const database = client.db('__CONCOX__')
         const devices = database.collection(collection1)
         const status = database.collection(collection2);
-        const device = devices.find({}).sort("createdAt", -1).limit(30)
+        const device = devices.find({}).sort("createdAt", -1).limit(30);
         var arr = [];
         await device.forEach(doc => {
             arr.push(doc.imei)
         });
+        var result = {};
         for(var i=0; i<arr.length; ++i){
-            console.log(`\nFor ${arr[i]}`)
-            const locations = status.find({gps: {$ne: null}, imei: `${arr[i]}`}).count()
-            // console.log(locations.limit())
-            // await locations.forEach(loc => console.log(loc))
-            console.log(await locations)
+            const locations = status.find({imei: arr[i], gps: {$ne: null}}).sort("createdAt", -1).limit(50).sort("createdAt", 1);
+            result[arr[i]] = [];
+            await locations.forEach(location => {
+                result[arr[i]] = [...result[arr[i]], location.gps]
+            })
         }
     } catch(err){
         console.log(err)
     } finally {
         await client.close()
+        return result;
     }
 }
 
@@ -45,13 +43,15 @@ app.post("/api1/:collection1", (req, res)=>{
     if(typeof(req.body) == 'object'){
         var connUrl = Object.values(req.body)[0];
     } else {
-        var connUrl = req.body;
+        var connUrl = req.body.slice(1, -1);
     }
     if(Array.isArray(connUrl)){
         connUrl = connUrl[0];
     }
-    // getData(connUrl, collection1, collection2).catch(console.error);
-    res.send("Got it.");
+    var location = getData(connUrl, collection1, collection2).catch(console.error);
+    location.then((result)=>{
+        res.json(result)
+    })
 })
 
 app.post("/api2", (req, res)=>{
