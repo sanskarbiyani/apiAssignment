@@ -46,28 +46,16 @@ app.post("/api1/:collection1", (req, res)=>{
     res.send("Got it.");
 })
 
-function getLocation(addresses){
-    // var result = addresses.map(address => {
-    //     
-    //     request(url, { json: true }, (err, res, body) => {
-    //         if (err) { return console.log(err); }
-    //         coor = body.results[0].geometry.location
-    //         retValue = {
-    //             "add": body.results[0].formatted_address,
-    //             "location": [coor.lat, coor.lng]
-    //         }
-    //         console.log(retValue);
-    //         return retValue
-    //     });
-    // })
-}
-
 app.post("/api2", (req, res)=>{
-    var baseURL = "https://maps.googleapis.com/maps/api/geocode/json?address="
-    var apiKey = "AIzaSyA5bwbEsAOUMOI4RK2zXcIayG4vjuQSpcw"
-    var addresses = req.body.address
+    var baseURL = "https://maps.googleapis.com/maps/api/geocode/json?address=";
+    var apiKey = "AIzaSyA5bwbEsAOUMOI4RK2zXcIayG4vjuQSpcw";
+    if(Array.isArray(req.body)){
+        var receivedAddresses = req.body;
+    } else {
+        var receivedAddresses = Object.values(req.body)[0];
+    }
     var result = []
-    addresses.forEach(address => {
+    receivedAddresses.forEach(address => {
         var url = baseURL + address + "&key=" + apiKey;
         axios.get(url)
         .then(response => {
@@ -82,7 +70,7 @@ app.post("/api2", (req, res)=>{
             console.log(error);
         })
         .finally(()=>{
-            if(result.length == addresses.length){
+            if(result.length == receivedAddresses.length){
                 res.setHeader('Content-Type', 'application/json');
                 res.send(JSON.stringify(result));
             }
