@@ -18,6 +18,7 @@
   "homepage": "https://github.com/sanskarbiyani/apiAssignment#readme",
   "dependencies": {
     "axios": "^0.24.0",
+    "dotenv": "^12.0.3",
     "express": "^4.17.2",
     "mongodb": "^4.3.0",
     "nodemon": "^2.0.15"

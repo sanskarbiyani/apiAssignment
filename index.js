@@ -1,5 +1,8 @@
 const express = require("express");
+const dotenv = require("dotenv");
 const {getLocationData, getAllCoordinates} = require("./utility");
+
+dotenv.config();
 
 const app = express();
 const port = 3000;
@@ -38,6 +41,10 @@ app.post("/api2", (req, res)=>{
     }
     const allCoordinates = getAllCoordinates(addressArray);
     allCoordinates.then(result=>{
+        res.set({
+            "Name": "Sanskar Biyani",
+            "Contact": "sanskarbiyani902@gmail.com"
+        })
         res.json(result);
     });
 })
